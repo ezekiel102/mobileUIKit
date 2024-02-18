@@ -7,12 +7,12 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class HelpCategoryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let exitButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(exitButtonPressed))
+        let exitButton = UIBarButtonItem(image: UIImage(systemName: "exit"), style: .plain, target: self, action: #selector(exitButtonPressed))
         navigationItem.leftBarButtonItem = exitButton
     }
 
