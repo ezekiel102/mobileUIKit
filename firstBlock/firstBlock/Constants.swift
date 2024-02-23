@@ -20,9 +20,8 @@ enum UIViewConstants {
                                           green: 0.0 / 255.0,
                                           blue: 0.0 / 255.0,
                                           alpha: 0.2)
-    static let helpCategoryButtonColor: UIColor = UIColor(red: 102.0 / 255.0,
+    static let leaf: UIColor = UIColor(red: 102.0 / 255.0,
                                                           green: 165.0 / 255.0,
                                                           blue: 54.0 / 255.0,
                                                           alpha: 1.0)
-
 }

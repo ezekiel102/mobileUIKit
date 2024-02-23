@@ -14,22 +14,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        self.window = UIWindow(windowScene: windowScene)
+        guard let _ = (scene as? UIWindowScene) else { return }
+        window?.backgroundColor = .red
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let splashScreenController = mainStoryboard.instantiateViewController(
-            withIdentifier: "SplashScreenViewController")
         let mainViewController = mainStoryboard.instantiateViewController(
             withIdentifier: "TabBarController")
-        self.window!.rootViewController = splashScreenController
-        self.window!.makeKeyAndVisible()
-        let navigationController = UINavigationController(rootViewController: mainViewController)
-        let _ = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
-            self.window!.rootViewController = navigationController
+        let _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
+            self.window!.rootViewController = mainViewController
         }
     }
-
-
 
     func sceneDidDisconnect(_ scene: UIScene) {
     }
@@ -45,7 +38,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
-
-
 }
-
