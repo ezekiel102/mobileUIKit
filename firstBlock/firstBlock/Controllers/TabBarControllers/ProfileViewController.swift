@@ -9,7 +9,8 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         self.navigationController?.setupNavigationBar()
         self.navigationItem.title = "Профиль"
         let exitButton = UIBarButtonItem(

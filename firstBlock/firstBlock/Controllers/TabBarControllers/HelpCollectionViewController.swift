@@ -16,7 +16,6 @@ class HelpCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         let cellNibName = UINib(nibName: "CollectionViewCell", bundle: nil)
         let headerNibName = UINib(nibName: "HeaderCollectionView", bundle: nil)
         self.helpCollectionView.register(cellNibName,
@@ -25,9 +24,6 @@ class HelpCollectionViewController: UICollectionViewController {
             headerNibName,
             forSupplementaryViewOfKind: "header",
             withReuseIdentifier: "HeaderCollectionView")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.setupNavigationBar()
         self.navigationItem.title = "Помочь"
         let exitButton = UIBarButtonItem(

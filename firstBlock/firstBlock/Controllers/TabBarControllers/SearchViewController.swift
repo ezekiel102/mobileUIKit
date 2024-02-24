@@ -9,7 +9,8 @@ import UIKit
 
 class SearchViewController: UIViewController {
 
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         self.navigationController?.setupNavigationBar()
         self.navigationItem.title = "Поиск"
         let exitButton = UIBarButtonItem(
@@ -19,5 +20,4 @@ class SearchViewController: UIViewController {
             action: #selector(navigationController?.exitButtonPressed))
         self.navigationItem.leftBarButtonItem = exitButton
     }
-
 }
