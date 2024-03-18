@@ -6,131 +6,156 @@
 //
 
 import UIKit
+import SnapKit
 
 class TabBarController: UITabBarController {
-
-    // MARK: - Delegate properties and functions
 
     // MARK: - View lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        initialize()
+        loadCustomMainTabView()
+        loadViewControllers()
     }
 
     // MARK: - Private constants
 
     private enum UIConstants {
         static let helpButtonSize: CGFloat = 42
-        static let heartImageViewHeightSize: CGFloat = 15
-        static let heartImageViewWidthSize: CGFloat = 18
-
+        static let circleRadius: CGFloat = 27
     }
+
+    private var tabBarCenter: CGFloat { self.tabBar.bounds.width / 2 }
 
     // MARK: - Private properties
 
-    private lazy var helpButton: UIButton = {
+    private var helpButton: UIButton = {
         let helpButton = UIButton()
         helpButton.layer.cornerRadius = UIConstants.helpButtonSize / 2
-        helpButton.backgroundColor = .white
-        helpButton.layer.shadowColor = UIViewConstants.black20.cgColor
-        helpButton.layer.shadowOpacity = 1
+        helpButton.backgroundColor = .leaf
+        helpButton.layer.shadowColor = UIColor.leaf.cgColor
+        helpButton.layer.shadowOpacity = 0.7
         helpButton.layer.shadowOffset = .zero
-        helpButton.layer.shadowRadius = 10
-        helpButton.translatesAutoresizingMaskIntoConstraints = false
+        helpButton.layer.shadowRadius = 2
         return helpButton
     }()
 
-    private lazy var heartImageView: UIImageView = {
+    private var heartImageView: UIImageView = {
         let heartImageView = UIImageView()
         heartImageView.image = UIImage(systemName: "heart.fill")
-        heartImageView.tintColor = UIViewConstants.leaf
-        heartImageView.translatesAutoresizingMaskIntoConstraints = false
+        heartImageView.tintColor = .white
         return heartImageView
     }()
 
-    // MARK: - Private methods
-    private func initialize() {
+    private lazy var circleLayer: CAShapeLayer = {
+        let circleLayer = CAShapeLayer()
+        let path = UIBezierPath()
+        path.addArc(withCenter: CGPoint(x: tabBarCenter, y: 12),
+                    radius: UIConstants.circleRadius,
+                    startAngle: .pi,
+                    endAngle: 0 * 180 / .pi,
+                    clockwise: true)
+        circleLayer.path = path.cgPath
+        circleLayer.fillColor = UIColor.white.cgColor
+        circleLayer.shadowPath = path.cgPath
+        circleLayer.shadowColor = UIColor.whiteTwo.cgColor
+        circleLayer.shadowOpacity = 0.2
+        circleLayer.shadowRadius = 2
+        return circleLayer
+    }()
+
+}
+
+private extension TabBarController {
+
+    func loadCustomMainTabView() {
+        tabBar.layer.insertSublayer(circleLayer, at: 0)
+        tabBar.layer.backgroundColor = UIColor.white.cgColor
+        tabBar.layer.shadowColor = UIColor.black20.cgColor
+        tabBar.layer.shadowOpacity = 0.2
+        tabBar.layer.shadowRadius = 2
+
         tabBar.addSubview(helpButton)
         helpButton.addSubview(heartImageView)
         helpButton.addTarget(self,
                              action: #selector(didPressHelpButton),
                              for: .touchUpInside)
 
-        NSLayoutConstraint.activate([
-        helpButton.heightAnchor.constraint(
-            equalToConstant: UIConstants.helpButtonSize),
-        helpButton.widthAnchor.constraint(
-            equalToConstant: UIConstants.helpButtonSize),
-        helpButton.centerXAnchor.constraint(
-            equalTo: tabBar.centerXAnchor),
-        helpButton.topAnchor.constraint(
-            equalTo: tabBar.topAnchor, constant: -10)
-        ])
+        helpButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(tabBar.snp.top).offset(-10)
+            make.width.height.equalTo(UIConstants.helpButtonSize)
+        }
 
-        NSLayoutConstraint.activate([
-            heartImageView.heightAnchor.constraint(
-                equalToConstant: UIConstants.heartImageViewHeightSize),
-            heartImageView.widthAnchor.constraint(
-                equalToConstant: UIConstants.heartImageViewWidthSize),
-            heartImageView.centerXAnchor.constraint(
-                equalTo: helpButton.centerXAnchor),
-            heartImageView.centerYAnchor.constraint(
-                equalTo: helpButton.centerYAnchor)
-        ])
+        heartImageView.snp.makeConstraints { make in
+            make.center.equalTo(helpButton.snp.center)
+        }
 
-        tabBar.tintColor = UIViewConstants.leaf
-        tabBar.unselectedItemTintColor = UIViewConstants.warmGrey
+    }
 
-        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+    func loadViewControllers() {
+        let newsNC = UINavigationController(rootViewController: NewsViewController())
+        newsNC.tabBarItem.title = "Новости"
+        newsNC.tabBarItem.image = UIImage(systemName: "list.bullet")
 
-        let newsNC = mainStoryboard.instantiateViewController(
-            withIdentifier: "NewsNavigationController")
-        let searchNC = mainStoryboard.instantiateViewController(
-            withIdentifier: "SearchNavigationController")
-        let helpNC = mainStoryboard.instantiateViewController(
-                withIdentifier: "HelpNavigationController")
-        let historyNC = mainStoryboard.instantiateViewController(
-            withIdentifier: "HistoryNavigationController")
-        let profileNC = mainStoryboard.instantiateViewController(
-            withIdentifier: "ProfileNavigationController")
+        let searchNC = UINavigationController(rootViewController: SearchViewController())
+        searchNC.tabBarItem.title = "Поиск"
+        searchNC.tabBarItem.image = UIImage(systemName: "magnifyingglass")
+
+        let helpNC = UINavigationController(rootViewController: HelpCollectionViewController())
+        helpNC.tabBarItem.title = "Помочь"
+
+        let historyNC = UINavigationController(rootViewController: HistoryViewController())
+        historyNC.tabBarItem.title = "История"
+        historyNC.tabBarItem.image = UIImage(systemName: "clock.arrow.circlepath")
+
+        let profileNC = UINavigationController(rootViewController: ProfileViewController())
+        profileNC.tabBarItem.title = "Профиль"
+        profileNC.tabBarItem.image = UIImage(systemName: "person.crop.circle")
 
         viewControllers = [newsNC, searchNC, helpNC, historyNC, profileNC]
 
         selectedIndex = 2
 
-        newsNC.tabBarItem.title = "Новости"
-        newsNC.tabBarItem.image = UIImage(systemName: "list.bullet")
-
-        searchNC.tabBarItem.title = "Поиск"
-        searchNC.tabBarItem.image = UIImage(systemName: "magnifyingglass")
-
-        helpNC.tabBarItem.title = "Помочь"
-
-        historyNC.tabBarItem.title = "История"
-        historyNC.tabBarItem.image = UIImage(systemName: "clock.arrow.circlepath")
-
-        profileNC.tabBarItem.title = "Профиль"
-        profileNC.tabBarItem.image = UIImage(systemName: "person.crop.circle")
-
     }
 
     @objc private func didPressHelpButton() {
         selectedIndex = 2
-        helpButton.backgroundColor = .white
-        heartImageView.tintColor = UIViewConstants.leaf
+        helpButton.backgroundColor = .leaf
+        heartImageView.tintColor = .white
     }
+
+}
+
+extension UITabBar {
+
+    open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let pointIsInside = super.point(inside: point, with: event)
+        if pointIsInside == false {
+            for subview in subviews {
+                let pointInSubview = subview.convert(point, from: self)
+                if subview.point(inside: pointInSubview, with: event) {
+                    return true
+                }
+            }
+        }
+        return pointIsInside
+    }
+
 }
 
 extension TabBarController: UITabBarControllerDelegate {
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+
+    override func tabBar(_ tabBar: UITabBar,
+                         didSelect item: UITabBarItem) {
         let selectedIndex = self.tabBar.items?.firstIndex(of: item)
         if selectedIndex == 2 {
-            helpButton.backgroundColor = .white
-            heartImageView.tintColor = UIViewConstants.leaf
-        } else {
-            helpButton.backgroundColor = UIViewConstants.leaf
+            helpButton.backgroundColor = .leaf
             heartImageView.tintColor = .white
+        } else {
+            helpButton.backgroundColor = .white
+            heartImageView.tintColor = .leaf
         }
     }
+
 }

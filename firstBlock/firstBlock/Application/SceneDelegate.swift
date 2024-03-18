@@ -14,14 +14,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
-        guard let _ = (scene as? UIWindowScene) else { return }
-        window?.backgroundColor = .red
-        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let mainViewController = mainStoryboard.instantiateViewController(
-            withIdentifier: "TabBarController")
-        let _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
-            self.window!.rootViewController = mainViewController
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        self.window = UIWindow(windowScene: windowScene)
+        let tabBarController = TabBarController()
+        self.window?.rootViewController = SplashScreen()
+        self.window?.makeKeyAndVisible()
+        _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
+            self.window?.rootViewController = tabBarController
         }
+
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

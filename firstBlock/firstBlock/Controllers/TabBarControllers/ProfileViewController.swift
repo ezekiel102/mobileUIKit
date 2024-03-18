@@ -13,11 +13,8 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         self.navigationController?.setupNavigationBar()
         self.navigationItem.title = "Профиль"
-        let exitButton = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.left"),
-            style: .plain,
-            target: self,
-            action: #selector(navigationController?.exitButtonPressed))
-        self.navigationItem.leftBarButtonItem = exitButton
+        addExitButton()
+        view.backgroundColor = .purple
     }
+
 }
