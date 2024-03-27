@@ -8,7 +8,7 @@
             "imageName": "kids"
         },
         "dateBegin" : 1708499241,
-        "dateEnd" : 1711004841,
+        "dateEnd" : 1713854317,
         "owner" : "Благотворительный фонд «Счастливый Мир»",
         "location" : "Санкт-Петербург, Кирочная улица, д. 50А, каб. 208",
         "contacts" : [
@@ -20,10 +20,8 @@
         "link" : "www.ya.ru",
         "previewImage" : "kidEvent",
         "mainImage" : "image1",
-        "secondaryImage" : [
-            "image2",
-            "image3"
-        ],
+        "secondary1Image" : "image2",
+        "secondary2Image" : "image3",
         "participants" : [
             {
                 "name" : "name1",
@@ -68,7 +66,7 @@
         ]
     },
     {
-        "id" : 2,
+        "id" : 1,
         "title" : "Второе событие",
         "category" : {
             "id" : 0,
@@ -88,10 +86,8 @@
         "link" : "www.ya.ru",
         "previewImage" : "kidEvent",
         "mainImage" : "image1",
-        "secondaryImage" : [
-            "image2",
-            "image3"
-        ],
+        "secondary1Image" : "image2",
+        "secondary2Image" : "image3",
         "participants" : [
             {
                 "name" : "name1",
@@ -107,12 +103,12 @@
         "id" : 3,
         "title" : "Конкурс по вокальному пению в детском доме №6",
         "category" : {
-            "id" : 0,
+            "id" : 1,
             "name" : "Взрослые",
             "imageName": "adults"
         },
         "dateBegin" : 1708499241,
-        "dateEnd" : 1710952308,
+        "dateEnd" : 1713854317,
         "owner" : "Благотворительный фонд «Счастливый Мир»",
         "location" : "Санкт-Петербург, Кирочная улица, д. 50А, каб. 208",
         "contacts" : [
@@ -124,10 +120,9 @@
         "link" : "www.ya.ru",
         "previewImage" : "kidEvent2",
         "mainImage" : "image1",
-        "secondaryImage" : [
-            "image2",
-            "image3"
-        ],
+        "mainImage" : "image1",
+        "secondary1Image" : "image2",
+        "secondary2Image" : "image3",
         "participants" : [
             {
                 "name" : "name1",

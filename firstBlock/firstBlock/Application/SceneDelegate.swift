@@ -16,7 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
+        let tabBarViewModel = TabBarViewModel()
         let tabBarController = TabBarController()
+        tabBarController.tabBarViewModel = tabBarViewModel
         self.window?.rootViewController = SplashScreen()
         self.window?.makeKeyAndVisible()
         _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in

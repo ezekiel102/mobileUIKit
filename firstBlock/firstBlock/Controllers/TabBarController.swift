@@ -10,6 +10,12 @@ import SnapKit
 
 class TabBarController: UITabBarController {
 
+    var tabBarViewModel: TabBarViewModel! {
+        didSet {
+            helpVC.helpViewModel = tabBarViewModel.helpViewModel
+        }
+    }
+
     // MARK: - View lifecycle
 
     override func viewDidLoad() {
@@ -28,6 +34,12 @@ class TabBarController: UITabBarController {
     private var tabBarCenter: CGFloat { self.tabBar.bounds.width / 2 }
 
     // MARK: - Private properties
+
+    private var newsVC = NewsViewController()
+    private var searchVC = SearchViewController()
+    private var helpVC = HelpCollectionViewController()
+    private var historyVC = HistoryViewController()
+    private var profileVC = ProfileViewController()
 
     private var helpButton: UIButton = {
         let helpButton = UIButton()
@@ -69,7 +81,7 @@ class TabBarController: UITabBarController {
 private extension TabBarController {
 
     func loadCustomMainTabView() {
-        tabBar.layer.insertSublayer(circleLayer, at: 0)
+        tabBar.layer.addSublayer(circleLayer)
         tabBar.layer.backgroundColor = UIColor.white.cgColor
         tabBar.layer.shadowColor = UIColor.black20.cgColor
         tabBar.layer.shadowOpacity = 0.2
@@ -90,26 +102,25 @@ private extension TabBarController {
         heartImageView.snp.makeConstraints { make in
             make.center.equalTo(helpButton.snp.center)
         }
-
     }
 
     func loadViewControllers() {
-        let newsNC = UINavigationController(rootViewController: NewsViewController())
+        let newsNC = UINavigationController(rootViewController: newsVC)
         newsNC.tabBarItem.title = "Новости"
         newsNC.tabBarItem.image = UIImage(systemName: "list.bullet")
 
-        let searchNC = UINavigationController(rootViewController: SearchViewController())
+        let searchNC = UINavigationController(rootViewController: searchVC)
         searchNC.tabBarItem.title = "Поиск"
         searchNC.tabBarItem.image = UIImage(systemName: "magnifyingglass")
 
-        let helpNC = UINavigationController(rootViewController: HelpCollectionViewController())
+        let helpNC = UINavigationController(rootViewController: helpVC)
         helpNC.tabBarItem.title = "Помочь"
 
-        let historyNC = UINavigationController(rootViewController: HistoryViewController())
+        let historyNC = UINavigationController(rootViewController: historyVC)
         historyNC.tabBarItem.title = "История"
         historyNC.tabBarItem.image = UIImage(systemName: "clock.arrow.circlepath")
 
-        let profileNC = UINavigationController(rootViewController: ProfileViewController())
+        let profileNC = UINavigationController(rootViewController: profileVC)
         profileNC.tabBarItem.title = "Профиль"
         profileNC.tabBarItem.image = UIImage(systemName: "person.crop.circle")
 

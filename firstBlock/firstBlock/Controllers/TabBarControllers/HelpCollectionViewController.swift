@@ -10,22 +10,18 @@ import SnapKit
 
 class HelpCollectionViewController: UIViewController {
 
+    var helpViewModel = HelpViewModel()
+    private var categories: [HelpCategory]!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.navigationController?.setupNavigationBar()
         self.navigationItem.title = "Помочь"
         addExitButton()
-        do {
-            self.array = try self.readOperator.readListFromJSON("HelpCategories")
-        } catch {
-            print("Categories load error: \(error)")
-        }
-        view.backgroundColor = .white
+
         loadCustomCollectionView()
     }
-
-    private var readOperator = ReadOperator()
-    private var array: [HelpCategory] = []
 
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -50,10 +46,16 @@ class HelpCollectionViewController: UIViewController {
 private extension HelpCollectionViewController {
 
     func loadCustomCollectionView() {
+        view.backgroundColor = .white
+
         view.addSubview(collectionView)
 
         collectionView.dataSource = self
         collectionView.delegate = self
+
+        helpViewModel.helpViewModelDelegate = self
+
+        helpViewModel.fetchCategories()
 
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 9, bottom: 0, right: 9))
@@ -66,7 +68,7 @@ extension HelpCollectionViewController: UICollectionViewDelegate, UICollectionVi
 
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        array.count
+        categories.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -76,9 +78,16 @@ extension HelpCollectionViewController: UICollectionViewDelegate, UICollectionVi
             for: indexPath) as? HelpCategoryCollectionViewCell else {
             fatalError("Failed to dequeue HelpCategoryCollectionViewCell in HelpC")
         }
-        cell.configure(name: array[indexPath.row].name,
-                       image: array[indexPath.row].imageName)
+        cell.configure(name: categories[indexPath.row].name,
+                       image: categories[indexPath.row].imageName)
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let nextVC = EventsTableViewController()
+        nextVC.eventsViewModel = EventsViewModel(category: categories[indexPath.row])
+        nextVC.categories = categories
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -121,4 +130,12 @@ extension HelpCollectionViewController: UICollectionViewDelegateFlowLayout {
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 9
     }
+}
+
+extension HelpCollectionViewController: HelpViewModelDelegate {
+
+    func fetchCategoriesList(list: [HelpCategory]) {
+        categories = list
+    }
+
 }

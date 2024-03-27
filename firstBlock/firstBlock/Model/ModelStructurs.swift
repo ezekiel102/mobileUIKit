@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HelpCategory: Identifiable, Codable {
+struct HelpCategory: Equatable, Codable {
 
     let id: Int
     let name: String
@@ -30,7 +30,8 @@ struct Event: Identifiable, Codable {
     let link: URL
     let previewImage: String
     let mainImage: String
-    let secondaryImage: [String]
+    let secondary1Image: String
+    let secondary2Image: String
     let participants: [Participants]
 
     var days: Int {
@@ -45,10 +46,22 @@ struct Event: Identifiable, Codable {
         currentDate > dateEnd
     }
 
-    var dateInterval: String {
+    var dateIntervalString: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM"
-        return "\(dateFormatter.string(from: dateBegin)) - \(dateFormatter.string(from: dateEnd))"
+        let dateInterval = "\(dateFormatter.string(from: dateBegin)) - \(dateFormatter.string(from: dateEnd))"
+        if isFinished {
+            return "Событие закончилось"
+        } else {
+            switch days {
+            case 1:
+                return "Событие заканчивается завтра"
+            case 0:
+                return "Событие заканчивается сегодня"
+            default:
+                return "Осталось \(days) дней (\(dateInterval))"
+            }
+        }
     }
 }
 
