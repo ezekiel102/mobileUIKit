@@ -302,6 +302,8 @@ class EventDetailViewController: UIViewController {
     private lazy var avatarsView: UIView = {
         let avatarsView = UIView()
         avatarsView.backgroundColor = .lightGrey
+        avatarsView.layer.borderWidth = 1
+        avatarsView.layer.borderColor = UIColor.whiteTwo.cgColor
 
         let avatarsStack = UIStackView()
         avatarsStack.spacing = -4
@@ -371,7 +373,7 @@ class EventDetailViewController: UIViewController {
         button.addSubview(barButtonlabel)
 
         button.snp.makeConstraints { make in
-            make.width.equalTo(viewWidth / 4)
+            make.width.equalTo((viewWidth - 3) / 4)
             make.height.equalTo(70)
         }
 
@@ -402,10 +404,27 @@ class EventDetailViewController: UIViewController {
         actionView.alignment = .center
 
         let tabBarButtonsItems = [ ("shirt", "Помощь\nвещами"), ("hands", "Стать\nволотером"),
-                                   ("tools", "Проф.\nпомощь"), ("coins", "Помочь\nденьгами") ]
+                                   ("tools", "Проф.\nпомощь"), ("coins", "Помочь\nденьгами")]
 
         for item in tabBarButtonsItems {
+
             actionView.addArrangedSubview(addTabBarButton(image: item.0, title: item.1))
+
+            if item.0 != tabBarButtonsItems.last!.0 {
+                lazy var hSeparator: UIView = {
+                    let line = UIView()
+                    line.backgroundColor = .gray
+                    line.layer.opacity = 0.45
+                    return line
+                }()
+
+                hSeparator.snp.makeConstraints { make in
+                    make.width.equalTo(1)
+                    make.height.equalTo(35)
+                }
+
+                actionView.addArrangedSubview(hSeparator)
+            }
         }
 
         return actionView

@@ -20,7 +20,7 @@ class HelpCollectionViewController: UIViewController {
         self.navigationItem.title = "Помочь"
         addExitButton()
 
-        loadCustomCollectionView()
+        loadQueue()
     }
 
     private var collectionView: UICollectionView = {
@@ -41,21 +41,39 @@ class HelpCollectionViewController: UIViewController {
         return collectionView
     }()
 
+    private var activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView()
+        activityIndicatorView.style = .large
+        return activityIndicatorView
+    }()
+
 }
 
 private extension HelpCollectionViewController {
 
+    func loadQueue() {
+        helpViewModel.helpViewModelDelegate = self
+        helpViewModel.fetchCategories()
+    }
+
+    func loadActivityIndicator() {
+        view.backgroundColor = .white
+        view.addSubview(activityIndicatorView)
+
+        activityIndicatorView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(357)
+        }
+
+        activityIndicatorView.startAnimating()
+    }
+
     func loadCustomCollectionView() {
         view.backgroundColor = .white
-
         view.addSubview(collectionView)
 
         collectionView.dataSource = self
         collectionView.delegate = self
-
-        helpViewModel.helpViewModelDelegate = self
-
-        helpViewModel.fetchCategories()
 
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 9, bottom: 0, right: 9))
@@ -78,14 +96,14 @@ extension HelpCollectionViewController: UICollectionViewDelegate, UICollectionVi
             for: indexPath) as? HelpCategoryCollectionViewCell else {
             fatalError("Failed to dequeue HelpCategoryCollectionViewCell in HelpC")
         }
-        cell.configure(name: categories[indexPath.row].name,
-                       image: categories[indexPath.row].imageName)
+        cell.configure(name: (categories![indexPath.row].name),
+                       image: categories![indexPath.row].imageName)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let nextVC = EventsTableViewController()
-        nextVC.eventsViewModel = EventsViewModel(category: categories[indexPath.row])
+        nextVC.eventsViewModel = EventsViewModel(category: categories![indexPath.row])
         nextVC.categories = categories
         navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -133,9 +151,13 @@ extension HelpCollectionViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension HelpCollectionViewController: HelpViewModelDelegate {
+    func didStartLoadingCategoriesList() {
+        loadActivityIndicator()
+    }
 
-    func fetchCategoriesList(list: [HelpCategory]) {
+    func didFinishLoadingCategoriesList(list: [HelpCategory]) {
         categories = list
+        loadCustomCollectionView()
     }
 
 }

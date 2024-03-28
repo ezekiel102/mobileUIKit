@@ -20,7 +20,7 @@ class EventsTableViewController: UIViewController {
         self.navigationItem.title = self.eventsViewModel.currentCategory.name
         addFilterButton(menu: filterButtonPressed())
 
-        loadCustomView()
+        loadQueue()
     }
 
     private var readOperator = ReadOperator()
@@ -77,9 +77,32 @@ class EventsTableViewController: UIViewController {
         return tableView
     }()
 
+    private var activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView()
+        activityIndicatorView.style = .large
+        return activityIndicatorView
+    }()
+
 }
 
 private extension EventsTableViewController {
+
+    func loadQueue() {
+        eventsViewModel.eventsViewModelDelegate = self
+        eventsViewModel.fetchEventsList()
+    }
+
+    func loadActivityIndicator() {
+        view.backgroundColor = .lightGrey
+        view.addSubview(activityIndicatorView)
+
+        activityIndicatorView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(357)
+        }
+
+        activityIndicatorView.startAnimating()
+    }
 
     func loadCustomView() {
         view.backgroundColor = .lightGrey
@@ -114,7 +137,7 @@ private extension EventsTableViewController {
             menuChildrens.append(UIAction(title: category.name) { _ in
                 self.eventsViewModel.currentCategory = category
                 self.navigationItem.title = self.eventsViewModel.currentCategory.name
-                self.tableView.reloadData()
+                self.eventsViewModel.fetchEventsList()
             })
         }
         return UIMenu(children: menuChildrens)
@@ -123,13 +146,13 @@ private extension EventsTableViewController {
     @objc func finishedButtonPressed() {
         self.eventsViewModel.toggleFinished(whichButton: true)
         switcherColors()
-        tableView.reloadData()
+        eventsViewModel.fetchEventsList()
     }
 
     @objc func notFinishedButtonPressed() {
         self.eventsViewModel.toggleFinished(whichButton: false)
         switcherColors()
-        tableView.reloadData()
+        eventsViewModel.fetchEventsList()
     }
 
     func switcherColors() {
@@ -166,6 +189,20 @@ extension EventsTableViewController: UITableViewDataSource, UITableViewDelegate 
         let eventDetail = EventDetailViewController()
         eventDetail.event = eventsViewModel.eventsList[indexPath.row]
         navigationController?.pushViewController(eventDetail, animated: true)
+    }
+
+}
+
+extension EventsTableViewController: EventsViewModelDelegate {
+
+    func didStartLoadingEventsList() {
+        tableView.reloadData()
+        loadActivityIndicator()
+    }
+
+    func didFinishLoadingEventsList() {
+        tableView.reloadData()
+        loadCustomView()
     }
 
 }

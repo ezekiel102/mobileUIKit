@@ -23,7 +23,8 @@ class TabBarViewModel {
 
 protocol HelpViewModelDelegate: AnyObject {
 
-    func fetchCategoriesList(list: [HelpCategory])
+    func didStartLoadingCategoriesList()
+    func didFinishLoadingCategoriesList(list: [HelpCategory])
 
 }
 
@@ -34,13 +35,25 @@ class HelpViewModel {
     private let readOperator = ReadOperator()
 
     func fetchCategories() {
-        do {
-            let list: [HelpCategory] = try self.readOperator.readListFromJSON("HelpCategories")
-            self.helpViewModelDelegate?.fetchCategoriesList(list: list)
-        } catch {
-            print("Categories load error: \(error)")
+        self.helpViewModelDelegate?.didStartLoadingCategoriesList()
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 3, qos: .background) {
+            do {
+                let list: [HelpCategory] = try self.readOperator.readListFromJSON("HelpCategories")
+                DispatchQueue.main.async {
+                    self.helpViewModelDelegate?.didFinishLoadingCategoriesList(list: list)
+                }
+            } catch {
+                print("Categories load error: \(error)")
+            }
         }
     }
+
+}
+
+protocol EventsViewModelDelegate: AnyObject {
+
+    func didStartLoadingEventsList()
+    func didFinishLoadingEventsList()
 
 }
 
@@ -50,17 +63,26 @@ class EventsViewModel {
         self.currentCategory = category
     }
 
+    weak var eventsViewModelDelegate: EventsViewModelDelegate?
+
     private let readOperator = ReadOperator()
     var isFinished = false
     var currentCategory: HelpCategory!
+    var eventsList: [Event]!
 
-    var eventsList: [Event] {
-        do {
-            return try self.readOperator.readListFromJSON("Events").filter {
-                $0.category == self.currentCategory && $0.isFinished == self.isFinished }
-        } catch {
-            print("Events load error: \(error)")
-            return []
+    func fetchEventsList() {
+        eventsList = []
+        self.eventsViewModelDelegate?.didStartLoadingEventsList()
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 3, qos: .background) {
+            do {
+                self.eventsList = try self.readOperator.readListFromJSON("Events").filter {
+                    $0.category == self.currentCategory && $0.isFinished == self.isFinished }
+                DispatchQueue.main.async {
+                    self.eventsViewModelDelegate?.didFinishLoadingEventsList()
+                }
+            } catch {
+                print("Events load error: \(error)")
+            }
         }
     }
 
